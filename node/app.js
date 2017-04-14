@@ -8,12 +8,6 @@ const
   request = require('request');
   path = require('path');
 
-
-var app = express();
-var users = JSON.parse(fs.readFileSync("../data/users.json", "utf8"));
-var menu = JSON.parse(fs.readFileSync("../data/menu.json", "utf8"));
-
-
 // These values should be set in config/default.json
 const
   APP_SECRET = config.get('appSecret'),
@@ -28,9 +22,19 @@ const
     key: KEY,
     cert: CERT,
     ca: CA
-  };
+  },
+  USER_FILE = (process.argv[2] == "test") ? config.get("testusers") : config.get("users"),
+  MENU_FILE = config.get("menu");
 
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && PORT && KEY && CERT && CA && USER_FILE)) {
+  console.error("Set the appropriate config values in config/default.json");
+  process.exit(1);
+};
 
+// Server variable initialisation
+var app = express();
+var users = JSON.parse(fs.readFileSync(USER_FILE, "utf8"));
+var menu = JSON.parse(fs.readFileSync(MENU_FILE, "utf8"));
 
 // Basic Express set-up
 app.set("port", PORT);
@@ -38,12 +42,6 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(express.static("public"))
-
-
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && PORT && KEY && CERT && CA)) {
-  console.error("Set the appropriate config values in config/default.json");
-  process.exit(1);
-};
 
 // Webhook Verification
 app.get("/webhook", function(req, res) {
@@ -108,7 +106,7 @@ app.post('/updatemenu', function(req, res) {
           }
           callback();
         })(function() {
-          fs.writeFileSync("../data/menu.json", JSON.stringify(menu));
+          fs.writeFileSync(MENU_FILE, JSON.stringify(menu));
         });
     res.sendStatus(200);
   } else {
@@ -128,7 +126,7 @@ function receivedMessage(event) {
           users[event.sender.id] = true;
           callback();
         })(function() {
-          fs.writeFileSync("../data/users.json", JSON.stringify(users));
+          fs.writeFileSync(USER_FILE, JSON.stringify(users));
           textMessage(event.sender.id, "You have been subscribed to receive menu messages.");
         });
       } else {
@@ -142,7 +140,7 @@ function receivedMessage(event) {
           delete users[event.sender.id];
           callback();
         })(function() {
-          fs.writeFileSync("../data/users.json", users);
+          fs.writeFileSync(USER_FILE, JSON.stringify(users));
           textMessage(event.sender.id, "You have been unsubscribed from receiving menu messages.");
         });
       } else {
