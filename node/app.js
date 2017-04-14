@@ -8,6 +8,10 @@ const
   request = require('request');
   path = require('path');
 
+process.title = "chumenu"
+const TEST_MODE = (process.argv[2] == "test");
+if (TEST_MODE) console.log("Using testing configuration");
+
 // These values should be set in config/default.json
 const
   APP_SECRET = config.get('appSecret'),
@@ -23,7 +27,7 @@ const
     cert: CERT,
     ca: CA
   },
-  USER_FILE = (process.argv[2] == "test") ? config.get("testusers") : config.get("users"),
+  USER_FILE = TEST_MODE ? config.get("testusers"): config.get("users"),
   MENU_FILE = config.get("menu");
 
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && PORT && KEY && CERT && CA && USER_FILE)) {

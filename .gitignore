@@ -1,4 +1,7 @@
 *test.js
 *test.py
+
 *.json
+!node/package.json
+
 *.out
