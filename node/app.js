@@ -90,8 +90,7 @@ app.post('/sendall', function(req, res) {
   var data = req.body;
   var message = data.meal + ":";
   if (data.validationToken === VALIDATION_TOKEN) {
-    // Deal with implicit array to string of size 1 array
-    constructMessage(data.menu);
+    message += constructMessage(data.menu);
     // Message subscribers
     for(var id in users) {
       api.textMessage(id, message);

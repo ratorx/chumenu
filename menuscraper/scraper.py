@@ -119,8 +119,6 @@ def post_message(args):
     # TODO: Redo to take into account new get_menu method
     # Make post request to node server to send menu data
     menu = get_menu(int(args[1]), int(args[2]))
-    if menu == None:
-        return
 
     with open(CONFIG_FILE, encoding="utf8") as f:
         cfg = json.load(f)
