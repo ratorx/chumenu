@@ -5,7 +5,7 @@ const
   fs = require('fs'),
   https = require('https');
   request = require('request');
-  path = require('path'),
+  path = require('path');
   api = require('./facebook');
 
 // These values should be set in config/default.json
@@ -103,7 +103,7 @@ app.post('/sendall', function(req, res) {
 
 // Hook for updating stored menu
 app.post('/updatemenu', function(req, res) {
-  console.log("Updating menu");
+  // console.log("Updating menu");
   var data = req.body;
   if (data.validationToken === VALIDATION_TOKEN) {
     (function(callback) {
