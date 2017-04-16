@@ -1,4 +1,3 @@
-process.env.NODE_APP_INSTANCE = "test" // Remove line before pull
 const
   bodyParser = require('body-parser'),
   config = require('config'),
@@ -8,8 +7,6 @@ const
   request = require('request');
   path = require('path'),
   api = require('./facebook');
-
-process.title = "chumenutest" // Change to chumenu before pull (& corresponding package.json line)
 
 // These values should be set in config/default.json
 const
@@ -128,8 +125,8 @@ app.post('/updatemenu', function(req, res) {
 function receivedMessage(event) {
   // Handle different cases - currently only text messages supported.
   switch (event.message.text) {
-    case "@subscribe":
-    case "@Subscribe":
+    case "subscribe":
+    case "Subscribe":
       if (!users[event.sender.id]) {
 
         (function(callback) {
@@ -143,8 +140,8 @@ function receivedMessage(event) {
         api.textMessage(event.sender.id, "You are already subscribed.");
       }
       break;
-    case "@unsubscribe":
-    case "@Unsubscribe":
+    case "unsubscribe":
+    case "Unsubscribe":
       if (users[event.sender.id]) {
         (function(callback) {
           delete users[event.sender.id];
@@ -157,18 +154,18 @@ function receivedMessage(event) {
         api.textMessage(event.sender.id, "You are not currently subscribed to receive menu messages.");
       }
       break;
-    case "@lunch":
+    case "lunch":
       menuMessage("Lunch", event.sender.id);
       break;
-    case "@dinner":
+    case "dinner":
       menuMessage("Dinner", event.sender.id);
       break;
-    case "@Lunch":
-    case "@Dinner":
+    case "Lunch":
+    case "Dinner":
       menuMessage(event.message.text, event.sender.id);
       break;
-    case "@help":
-    case "@Help":
+    case "help":
+    case "Help":
       api.textMessage(event.sender.id, "Type subscribe to get menu alerts.\nType unsubscribe to stop getting menu alerts.\nType lunch to get the next lunch menu.\nType dinner to get the next dinner menu.");
     default:
       // api.textMessage(event.sender.id, "Unrecognised. Supported operations are subscribe and unsubscribe.");
