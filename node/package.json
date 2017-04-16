@@ -15,8 +15,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node app.js",
-    "stop": "pkill --signal SIGINT chumenu"
+    "start": "nohup node app.js &",
+    "stop": "if pgrep chumenu; then pkill --signal SIGINT chumenu; fi"
   },
   "author": "Reetobrata Chatterjee",
   "license": "ISC"
