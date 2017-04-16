@@ -8,6 +8,8 @@ const
   path = require('path');
   api = require('./facebook');
 
+process.title = "chumenu";
+
 // These values should be set in config/default.json
 const
   VALIDATION_TOKEN = config.get('validationToken'),
