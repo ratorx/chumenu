@@ -21,9 +21,7 @@ The code itself is easy to understand. However, the integration of node and pyth
 If you want more keywords, drop me a message and I'll see what I can do. In the spirit of open source, feel free send a pull request.
 
 ### TODO:
-* Provide the dependencies for the code in the appropriate manner. Currently you have to just work it out from the imports.
-* Improve comments in the code
-* Improve code organisation
-* Make the integration less questionable
+* Improve reliability of server
+* Improve integration with python to allow message keywords to be declared in python
 * Add more keywords
-* Fix bugs
+* Add rating system with messaging_postbacks
