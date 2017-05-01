@@ -56,11 +56,11 @@ def help_message():
 
 
 MENU_FUNCTIONS = {
-    "*help": help_message,
+    "help": help_message,
     "default": default,
-    "*dinner": dinner,
-    "*lunch": lunch,
-    "*menu": menu
+    "dinner": dinner,
+    "lunch": lunch,
+    "menu": menu
 }
 
 

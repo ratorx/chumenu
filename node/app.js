@@ -6,10 +6,11 @@ const
   fs = require('fs'),
   https = require('https'),
   // request = require('request'),
-  spawn = require('child_process').spawn;
-  path = require('path'),
+  schedule = require('node-schedule'),
+  spawn = require('child_process').spawn,
+  path = require('path');
 
-process.title = "chumenu";
+process.title = "chumenutest";
 
 // These values should be set in config/default.json
 const
@@ -24,7 +25,7 @@ const
     ca: CA
   },
   USER_FILE = path.join(__dirname, config.get("users")),
-  MENU_FILE = path.join(__dirname, config.get("menu"));
+  MENU_SCRIPT = path.join(__dirname, config.get("menu"));
 
 if (!(VALIDATION_TOKEN && PORT && KEY && CERT && CA && USER_FILE)) {
   console.log("Set the appropriate config values in config/default.json");
@@ -34,7 +35,6 @@ if (!(VALIDATION_TOKEN && PORT && KEY && CERT && CA && USER_FILE)) {
 // Server variable initialisation
 var app = express();
 var users = JSON.parse(fs.readFileSync(USER_FILE, "utf8"));
-var menu = JSON.parse(fs.readFileSync(MENU_FILE, "utf8"));
 
 // Basic Express set-up
 app.set("port", PORT);
@@ -124,9 +124,27 @@ function receivedMessage(event) {
       }
       break;
     default:
-      python_script = spawn("python3", ["../menuscraper/menus.py", event.message.text, event.sender.id]);
+      var python_script = spawn("python3", [MENU_SCRIPT, event.message.text, event.sender.id]);
       python_script.stdout.on("data", function (data) {
         console.log(event.message.text + " " + event.sender.id + " " + data.toString());
       })
   }
+}
+
+var lunch = schedule.scheduleJob("40 11 * * *", function(){
+  var lunch_script = spawn("python3", [MENU_SCRIPT, "lunch", recipients_string(users)]);
+  lunch_script.stdout.on("data", function (data) {
+    console.log("lunch" + " " + "subscribers" + " " + data.toString());
+  });
+});
+
+var dinner = schedule.scheduleJob("17 15 * * *", function(){
+  var dinner_script = spawn("python3", [MENU_SCRIPT, "dinner", recipients_string(users)]);
+  dinner_script.stdout.on("data", function (data) {
+    console.log("dinner" + " " + "subscribers" + " " + data.toString());
+  });
+});
+
+function recipients_string(user_file) {
+  return Object.keys(user_file).join(" ");
 }
