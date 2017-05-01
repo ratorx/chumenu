@@ -1,13 +1,13 @@
 const
+  api = require('./facebook');
   bodyParser = require('body-parser'),
   config = require('config'),
   express = require('express'),
   fs = require('fs'),
   https = require('https'),
   // request = require('request'),
-  // path = require('path'),
-  api = require('./facebook'),
   spawn = require('child_process').spawn;
+  path = require('path'),
 
 process.title = "chumenu";
 
@@ -23,11 +23,11 @@ const
     cert: CERT,
     ca: CA
   },
-  USER_FILE = config.get("users"),
-  MENU_FILE = config.get("menu");
+  USER_FILE = path.join(__dirname, config.get("users")),
+  MENU_FILE = path.join(__dirname, config.get("menu"));
 
 if (!(VALIDATION_TOKEN && PORT && KEY && CERT && CA && USER_FILE)) {
-  console.error("Set the appropriate config values in config/default.json");
+  console.log("Set the appropriate config values in config/default.json");
   process.exit(1);
 };
 
@@ -53,7 +53,7 @@ const server = https.createServer(CREDS, app).listen(PORT, function(err) {
 });
 
 app.get("/privacy", function(req, res) {
-  res.sendfile("public/main.html");
+  res.sendFile(path.join(__dirname, "public/main.html"));
 })
 
 // Webhook Verification
@@ -71,7 +71,7 @@ app.get("/webhook", function(req, res) {
 
 // Callback from Facebook
 app.post('/webhook', function (req, res) {
-// From https://github.com/fbsamples/messenger-platform-samples
+  // From https://github.com/fbsamples/messenger-platform-samples
   var data = req.body;
 
   if (data.object === "page") {
