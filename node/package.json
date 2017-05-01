@@ -19,5 +19,5 @@
     "stop": "if pgrep chumenu; then pkill --signal SIGINT chumenu; fi"
   },
   "author": "Reetobrata Chatterjee",
-  "license": "ISC"
+  "license": "MIT"
 }
