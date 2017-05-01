@@ -6,7 +6,8 @@ const
   https = require('https'),
   // request = require('request'),
   // path = require('path'),
-  api = require('./facebook');
+  api = require('./facebook'),
+  spawn = require('child_process').spawn;
 
 process.title = "chumenu";
 
@@ -84,47 +85,10 @@ app.post('/webhook', function (req, res) {
     });
   } else {
     // Nothing else is currently supported
-    console.error("Unsupported action attempted.")
+    console.log("Unsupported action attempted.")
   }
   res.sendStatus(200);
 });
-
-// Hook for sending messages to all subscribers
-app.post('/sendall', function(req, res) {
-  var data = req.body;
-  var message = data.meal + ":";
-  if (data.validationToken === VALIDATION_TOKEN) {
-    message += constructMessage(data.menu);
-    // Message subscribers
-    for(var id in users) {
-      api.textMessage(id, message);
-    }
-    res.sendStatus(200);
-  } else {
-    res.error("Invalid validation token.");
-    res.sendStatus(403);
-  }
-})
-
-// Hook for updating stored menu
-app.post('/updatemenu', function(req, res) {
-  // console.log("Updating menu");
-  var data = req.body;
-  if (data.validationToken === VALIDATION_TOKEN) {
-    (function(callback) {
-          if (data.menu) {
-            menu = data.menu;
-          }
-          callback();
-        })(function() {
-          fs.writeFileSync(MENU_FILE, JSON.stringify(menu));
-        });
-    res.sendStatus(200);
-  } else {
-    res.error("Invalid validation token.");
-    res.sendStatus(403);
-  }
-})
 
 // Parse received message - TODO: Make it more modular to match cases
 function receivedMessage(event) {
@@ -159,37 +123,10 @@ function receivedMessage(event) {
         api.textMessage(event.sender.id, "You are not currently subscribed to receive menu messages.");
       }
       break;
-    case "lunch":
-      menuMessage("Lunch", event.sender.id);
-      break;
-    case "dinner":
-      menuMessage("Dinner", event.sender.id);
-      break;
-    case "Lunch":
-    case "Dinner":
-      menuMessage(event.message.text, event.sender.id);
-      break;
-    case "help":
-    case "Help":
-      api.textMessage(event.sender.id, "Type subscribe to get menu alerts.\nType unsubscribe to stop getting menu alerts.\nType lunch to get the next lunch menu.\nType dinner to get the next dinner menu.");
     default:
-      // api.textMessage(event.sender.id, "Unrecognised. Supported operations are subscribe and unsubscribe.");
-      break;
+      python_script = spawn("python3", ["../menuscraper/menus.py", event.message.text, event.sender.id]);
+      python_script.stdout.on("data", function (data) {
+        console.log(event.message.text + " " + event.sender.id + " " + data.toString());
+      })
   }
-}
-
-// Send menu message on request
-function menuMessage(mealname, id) {
-  var message = mealname + ":";
-  var meal = menu[mealname];
-  message += constructMessage(meal)
-  api.textMessage(id, message);
-}
-
-function constructMessage(menuinfo) {
-  var message = ""
-  if (!menuinfo) message = "\n - TBC";
-  else if (typeof menuinfo === "string") message += "\n -  " + menuinfo;
-  else menuinfo.forEach( (item) => message += "\n -  " + item);
-  return message;
 }
