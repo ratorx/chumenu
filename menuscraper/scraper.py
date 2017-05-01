@@ -23,6 +23,7 @@ CONFIG_FILE = "../node/config/default.json"
 MENU_URL = "https://www.chu.cam.ac.uk/student-hub/catering/menus/"
 MAX_RETRIES = 5
 
+
 def get_table():
 
     r = None
@@ -33,18 +34,20 @@ def get_table():
     r.raise_for_status()
 
     soup = BeautifulSoup(r.text, "html.parser")
-    return soup.find("div", class_="medium-8 small-centered columns content-container").table
+    div_class = "medium-8 small-centered columns content-container"
+    return soup.find("div", class_=div_class).table
+
 
 def parse_list(menu):
 
     if menu is None:
-        return menu
+        return post_processing(None)
 
     items = menu.findAll("li")
 
     # No data
     if len(items) == 0:
-        return None
+        return post_processing(None)
 
     items[:] = [item.string for item in items]
 
@@ -54,14 +57,15 @@ def parse_list(menu):
 
     return post_processing(items)
 
+
 def post_processing(items):
 
+    if items is None:
+        return ["TBC"]
     # Remove random chars from the end
     for i, item in enumerate(items):
-        if not item[-1].isalpha():
+        if not item[-1].isalpha() and not item[-1] in [")"]:
             items[i] = item[:-1]
-
-    items[:] = [item if item[-1].isalpha() else item[:-1] for item in items]
 
     return items
 
@@ -97,6 +101,7 @@ def get_menu(day, time, table=None, menus=None):
 
     return parse_list(menu)
 
+
 def get_all_menus(table=None):
     """
     Similar to get_menu, but returns all the menus
@@ -114,7 +119,6 @@ def get_all_menus(table=None):
     return menus
 
 
-
 def post_message(args):
     # TODO: Redo to take into account new get_menu method
     # Make post request to node server to send menu data
@@ -130,7 +134,7 @@ def post_message(args):
         payload["meal"] = "Lunch"
 
     r = req.post("{}:{}/sendall".format(cfg["serverURL"], cfg["port"]),
-                      data=payload)
+                 json=payload)
     r.raise_for_status()
 
 if __name__ == "__main__":
