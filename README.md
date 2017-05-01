@@ -15,13 +15,12 @@ These commands can be sent as messages to the Facebook page linked above.
 * **help** - Repeats above info
 
 ## Docs
-The code itself is easy to understand. However, the integration of node and python might require more explanation. The server which processes and sends messages is written in node. The web scraping is done in python. The scraped data is sent to the server by making a post request from the python script to the appropriate URL. The server then deals with the data.
+The node server handles the webhook verification. Also it receives the messaging notifications from Facebook. This is then passed as an argument to a python script which sends a POST request to the Facebook API. The keywords can be defined inside the menus.py dictionary. A decorator for sending a post request with the correct format for the message is included in api.py. Node-schedule handles sending the lunch & dinner menus at the appropriate times.
 
 ## Development
 If you want more keywords, drop me a message and I'll see what I can do. In the spirit of open source, feel free send a pull request.
 
 ### TODO:
 * Improve reliability of server
-* Improve integration with python to allow message keywords to be declared in python
 * Add more keywords
 * Add rating system with messaging_postbacks
