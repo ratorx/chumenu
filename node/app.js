@@ -3,9 +3,9 @@ const
   config = require('config'),
   express = require('express'),
   fs = require('fs'),
-  https = require('https');
-  request = require('request');
-  path = require('path');
+  https = require('https'),
+  // request = require('request'),
+  // path = require('path'),
   api = require('./facebook');
 
 process.title = "chumenu";
@@ -13,10 +13,10 @@ process.title = "chumenu";
 // These values should be set in config/default.json
 const
   VALIDATION_TOKEN = config.get('validationToken'),
-  PORT = config.get('port')
+  PORT = config.get('port'),
   KEY = fs.readFileSync(config.get("key")),
   CERT = fs.readFileSync(config.get("cert")),
-  CA = fs.readFileSync(config.get("ca"))
+  CA = fs.readFileSync(config.get("ca")),
   CREDS = {
     key: KEY,
     cert: CERT,
@@ -50,6 +50,10 @@ const server = https.createServer(CREDS, app).listen(PORT, function(err) {
 
   console.log(`Listening on port ${PORT}`);
 });
+
+app.get("/privacy", function(req, res) {
+  res.sendfile("public/main.html");
+})
 
 // Webhook Verification
 app.get("/webhook", function(req, res) {
