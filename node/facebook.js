@@ -1,5 +1,6 @@
-var config = require("config");
-var request = require("request");
+const
+  config = require("config"),
+  request = require("request");
 
 const
   APP_SECRET = config.get('appSecret'),
