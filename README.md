@@ -1,7 +1,7 @@
 # Churchill College Menu Bot
 Facebook Messenger bot which sends the hall menu for lunch and dinner at Churchill College.
 
-[Link to Facebook page](https://www.facebook.com/churchillmenu "Churchill Menus")
+[Link to Facebook page](https://www.facebook.com/churchillmenus "Churchill Menus")
 
 **Note:** App has not yet been submitted for approval to be an official messenger bot, due to forms which need to be filled. If you want to be a tester (and be able to use the bot), contact [Reeto Chatterjee](https://www.facebook.com/reetoc "Reeto Chatterjee") on Facebook.
 
