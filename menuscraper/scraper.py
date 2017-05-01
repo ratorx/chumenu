@@ -14,14 +14,20 @@ Plans for future:
     from JSON - however, this might have concurrency issues.
 """
 import json
+import os
 from sys import argv
 
 from bs4 import BeautifulSoup
 import requests as req
 
-CONFIG_FILE = "../node/config/default.json"
+SCRIPT_DIR = os.path.dirname(__file__)
+REL_PATH = "../node/config/default.json"
+CONFIG_FILE = os.path.join(SCRIPT_DIR, REL_PATH)
 MENU_URL = "https://www.chu.cam.ac.uk/student-hub/catering/menus/"
 MAX_RETRIES = 5
+
+with open(CONFIG_FILE, encoding="utf8") as f:
+    CONFIG = json.load(f)
 
 
 def get_table():
@@ -61,13 +67,15 @@ def parse_list(menu):
 def post_processing(items):
 
     if items is None:
-        return ["TBC"]
+        return "\n - TBC"
     # Remove random chars from the end
     for i, item in enumerate(items):
         if not item[-1].isalpha() and not item[-1] in [")"]:
             items[i] = item[:-1]
+        if item == "FOD":
+            items[i] = "Fish of the Day"
 
-    return items
+    return "\n - " + "\n - ".join(items)
 
 
 def get_menu(day, time, table=None, menus=None):
@@ -124,18 +132,16 @@ def post_message(args):
     # Make post request to node server to send menu data
     menu = get_menu(int(args[1]), int(args[2]))
 
-    with open(CONFIG_FILE, encoding="utf8") as f:
-        cfg = json.load(f)
-
-    payload = {"validationToken": cfg["validationToken"], "menu": menu}
+    payload = {"validationToken": CONFIG["validationToken"], "menu": menu}
     if args[2] == "1":
         payload["meal"] = "Dinner"
     else:
         payload["meal"] = "Lunch"
 
-    r = req.post("{}:{}/sendall".format(cfg["serverURL"], cfg["port"]),
+    r = req.post("{}:{}/sendall".format(CONFIG["serverURL"], CONFIG["port"]),
                  json=payload)
     r.raise_for_status()
+
 
 if __name__ == "__main__":
     post_message(argv)
