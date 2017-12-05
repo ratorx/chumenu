@@ -3,7 +3,7 @@ Facebook Messenger bot which sends the hall menu for lunch and dinner at Churchi
 
 [Link to Facebook page](https://www.facebook.com/churchillmenus "Churchill Menus")
 
-**Note:** App has not yet been submitted for approval to be an official messenger bot, due to forms which need to be filled. If you want to be a tester (and be able to use the bot), contact [Reeto Chatterjee](https://www.facebook.com/reetoc "Reeto Chatterjee") on Facebook.
+**UPDATE**: This version of chumenu is no longer developed. It will be replaced by a shinier [Go version](https://www.github.com/ratorx/chumenu-go) some time in the future. I will only be fixing serious bugs for now.
 
 ## Supported commands
 These commands can be sent as messages to the Facebook page linked above.
