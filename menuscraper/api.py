@@ -56,10 +56,7 @@ def message_base(message_constructor):
     in the argument.
     """
 
-    payload = {
-        "recipient": None,
-        "message": None
-    }
+    payload = {"recipient": None, "message": None}
 
     def post_request():
         """
@@ -72,7 +69,12 @@ def message_base(message_constructor):
 
     def message_wrapper(recipients, *args):
 
-        payload["message"] = parse_message(message_constructor(*args))
+        # Check for no information
+        check = message_constructor(*args)
+        if check is None:
+            return [False]
+
+        payload["message"] = parse_message(check)
         success = []
         for recipient in parse_recipients(recipients):
             if recipient is None:

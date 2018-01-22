@@ -51,6 +51,50 @@ def dinner():
 
 
 @api.message_base
+def auto_lunch():
+    day = datetime.today().isoweekday()
+    time = datetime.now()
+    time = (time.hour, time.minute)
+
+    prefix = "Today's Lunch:"
+
+    # Set to tomorrow after lunch ends
+    if time[0] > 13 or (time[0] == 13 and time[1] > 45):
+        day %= 7
+        day += 1
+        prefix = "Tomorrow's Lunch:"
+
+    ret = prefix + scraper.get_menu(day, 0)
+
+    if "- TBC" in ret or "To be confirmed" in ret:
+        return None
+    else:
+        return ret
+
+
+@api.message_base
+def auto_dinner():
+    day = datetime.today().isoweekday()
+    time = datetime.now()
+    time = (time.hour, time.minute)
+
+    prefix = "Today's Dinner:"
+
+    # Set to tomorrow after dinner ends
+    if time[0] > 19 or (time[0] == 19 and time[1] > 15):
+        day %= 7
+        day += 1
+        prefix = "Tomorrow's Dinner:"
+
+    ret = prefix + scraper.get_menu(day, 1)
+
+    if "- TBC" in ret or "To be confirmed" in ret:
+        return None
+    else:
+        return ret
+
+
+@api.message_base
 def help_message():
     return "Type subscribe to get menu alerts.\nType unsubscribe to stop getting menu alerts.\nType lunch to get the next lunch menu.\nType dinner to get the next dinner menu."
 
@@ -60,6 +104,8 @@ MENU_FUNCTIONS = {
     "default": default,
     "dinner": dinner,
     "lunch": lunch,
+    "auto_dinner": auto_dinner,
+    "auto_lunch": auto_lunch,
     "menu": menu
 }
 

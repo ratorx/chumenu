@@ -59,7 +59,7 @@ def parse_list(menu):
 
     # Empty list as data
     if items[0] == "\xa0":
-        return None
+        return parse_list(None)
 
     return post_processing(items)
 
@@ -84,28 +84,30 @@ def get_menu(day, time, table=None, menus=None):
     day: day of the week (1-7) (in accordance with linux date)
     time: lunch or dinner (0 or 1)
     """
+    if table is None:
+        table = get_table()
+        if table is None:
+            return parse_list(None)
+
     if menus is not None:
         if day == 0:
-            return None
+            return parse_list(None)
         try:
             return menus[day-1][time]
         except IndexError:
-            return None
-
-    if table is None:
-        table = get_table()
+            return parse_list(None)
 
     row = None
     try:
         row = table.findAll("tr")[day]
     except IndexError:
-        return None
+        return parse_list(None)
 
     menu = None
     try:
         menu = row.findAll("td")[time + 1]
     except IndexError:
-        return None
+        return parse_list(None)
 
     return parse_list(menu)
 

@@ -11,11 +11,12 @@
     "fs": "0.0.1-security",
     "https": "^1.0.0",
     "path": "^0.12.7",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "node-schedule": "^1.2.1"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nohup node app.js &",
+    "start": "nohup nodejs app.js &",
     "stop": "if pgrep chumenu; then pkill --signal SIGINT chumenu; fi"
   },
   "author": "Reetobrata Chatterjee",

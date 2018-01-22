@@ -10,7 +10,7 @@ const
   spawn = require('child_process').spawn,
   path = require('path');
 
-process.title = "chumenutest";
+process.title = "chumenu";
 
 // These values should be set in config/default.json
 const
@@ -18,16 +18,14 @@ const
   PORT = config.get('port'),
   KEY = fs.readFileSync(config.get("key")),
   CERT = fs.readFileSync(config.get("cert")),
-  CA = fs.readFileSync(config.get("ca")),
   CREDS = {
     key: KEY,
-    cert: CERT,
-    ca: CA
+    cert: CERT
   },
-  USER_FILE = path.join(__dirname, config.get("users")),
-  MENU_SCRIPT = path.join(__dirname, config.get("menu"));
+  USER_FILE = path.join("", config.get("users")),
+  MENU_SCRIPT = path.join("", config.get("menu"));
 
-if (!(VALIDATION_TOKEN && PORT && KEY && CERT && CA && USER_FILE)) {
+if (!(VALIDATION_TOKEN && PORT && KEY && CERT && USER_FILE)) {
   console.log("Set the appropriate config values in config/default.json");
   process.exit(1);
 };
@@ -71,6 +69,7 @@ app.get("/webhook", function(req, res) {
 
 // Callback from Facebook
 app.post('/webhook', function (req, res) {
+  console.log("Entering callback");
   // From https://github.com/fbsamples/messenger-platform-samples
   var data = req.body;
 
@@ -96,6 +95,7 @@ function receivedMessage(event) {
   switch (event.message.text) {
     case "subscribe":
     case "Subscribe":
+      console.log("subscribe")
       if (!users[event.sender.id]) {
 
         (function(callback) {
@@ -132,16 +132,16 @@ function receivedMessage(event) {
 }
 
 var lunch = schedule.scheduleJob("40 11 * * *", function(){
-  var lunch_script = spawn("python3", [MENU_SCRIPT, "lunch", recipients_string(users)]);
+  var lunch_script = spawn("python3", [MENU_SCRIPT, "auto_lunch", recipients_string(users)]);
   lunch_script.stdout.on("data", function (data) {
-    console.log("lunch" + " " + "subscribers" + " " + data.toString());
+    console.log("auto_lunch" + " " + "subscribers" + " " + data.toString());
   });
 });
 
-var dinner = schedule.scheduleJob("17 15 * * *", function(){
-  var dinner_script = spawn("python3", [MENU_SCRIPT, "dinner", recipients_string(users)]);
+var dinner = schedule.scheduleJob("00 17 * * *", function(){
+  var dinner_script = spawn("python3", [MENU_SCRIPT, "auto_dinner", recipients_string(users)]);
   dinner_script.stdout.on("data", function (data) {
-    console.log("dinner" + " " + "subscribers" + " " + data.toString());
+    console.log("auto_dinner" + " " + "subscribers" + " " + data.toString());
   });
 });
 
